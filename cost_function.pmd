@@ -1,0 +1,89 @@
+## Cost functions
+
+### Softmax
+For softmax regression or layer
+$$
+J(\theta) = - \left[ \sum_{i=1}^{m} \sum_{k=1}^{K}  1\left\{y^{(i)} = k\right\} \log \frac{\exp(\theta^{(k)\top} x^{(i)})}{\sum_{j=1}^K \exp(\theta^{(j)\top} x^{(i)})}\right]
+$$
+
+The gradient is
+$$
+\begin{align}
+\nabla_{\theta^{(k)}} J(\theta) = - \sum_{i=1}^{m}{ \left[ x^{(i)} \left( 1\{ y^{(i)} = k\}  - P(y^{(i)} = k | x^{(i)}; \theta) \right) \right]  }
+\end{align}
+$$
+
+the $jth$ element of the gradient vector is $\frac{\partial J(\theta)}{\partial \theta_{lk}}$
+
+**Properties**
+
+Softmax regression has an unusual property that it has a “redundant” set of parameters.
+In other words, subtracting $\psi$ from every $\theta(j)$ does not affect our
+hypothesis’ predictions at all. More formally, we say that our softmax model
+is ”‘overparameterized,”’ meaning that for any hypothesis we might fit to the data,
+there are multiple parameter settings that give rise to exactly the same hypothesis
+function $h\theta$ mapping from inputs x to the predictions.
+
+hypothesis is to estimate the probability that $P(y=k|x)$ for each value of $k=1,…,K$
+
+Further, if the cost function $J(\theta)$ is minimized by some setting of the
+parameters $(\theta(1),\theta(2),…,\theta(k))$, then it is also minimized
+by $(\theta(1)−\psi,\theta(2)−\psi,…,\theta(k)−\psi)$ for any value of $\psi$.
+
+$J(\theta)$ is still convex, and thus gradient descent will not run into local
+optima problems. But the Hessian is singular/non-invertible, which causes a straightforward
+implementation of Newton’s method to run into numerical problems.
+
+
+### Multiclass SVM Loss
+The SVM loss is set up so that the SVM “wants” the correct class
+for each image to a have a score higher than the incorrect classes by
+some fixed margin $\Delta$
+
+The Multiclass SVM loss for the i-th example is then formalized
+as follows:
+
+$$
+L_i = \sum_{j\neq y_i} \max(0, s_j - s_{y_i} + \Delta)
+$$
+
+**Regularization**
+
+The issue is that this set of $W$ is not necessarily unique.
+One easy way to see this is that if some parameters $W$ correctly classify
+all examples (so loss is zero for each example), then any multiple of
+these parameters $\lambda W$ where $\lambda > 1$ will also give zero
+loss because this transformation uniformly stretches all score
+magnitudes and hence also their absolute differences.
+
+Most common is to use $L2$ norm for regularization penalty $R(W)$
+$$
+R(W) = \sum_k\sum_l W_{k,l}^2
+$$
+
+Therefore the full multiclass SVM loss funtionc is therefore
+$$
+L = \frac{1}{N} \sum_i \sum_{j\neq y_i} \left[ \max(0, f(x_i; W)_j - f(x_i; W)_{y_i} + \Delta) \right] + \lambda \sum_k\sum_l W_{k,l}^2
+$$
+
+hyperparameter $\lambda$ is determined using cross validation.
+
+L2 penalty prefers smaller and more diffuse weight vectors,
+the final classifier is encouraged to take into account all input
+dimensions to small amounts rather than a few input dimensions and
+very strongly.
+
+This effect can improve the generalization performance of the
+classifiers on test images and lead to less overfitting.
+
+Note that biases do not have the same effect since, unlike the weights,
+they do not control the strength of influence of an input dimension.
+Therefore, it is common to only regularize the weights $W$ but not the
+biases $b$
+
+_L2 penalty leads to the appealing max margin property in SVMs_
+
+
+**Resources**
+- [Linear Classification](http://cs231n.github.io/linear-classify/)
+- [Support Vector Machines](http://cs229.stanford.edu/notes/cs229-notes3.pdf)

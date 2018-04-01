@@ -1,0 +1,884 @@
+
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/LaTeX", "output/HTML-CSS"],
+    "HTML-CSS": { availableFonts: ["TeX"] }
+    });
+</script>
+
+<script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<style>
+
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Raleway Light'), local('Raleway-Light'), url(http://fonts.gstatic.com/s/raleway/v9/-_Ctzj9b56b8RgXW8FArifk_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), url(http://fonts.gstatic.com/s/raleway/v9/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Raleway SemiBold'), local('Raleway-SemiBold'), url(http://fonts.gstatic.com/s/raleway/v9/xkvoNo9fC8O2RDydKj12b_k_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
+}
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+body {
+  margin: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block;
+}
+audio,
+canvas,
+progress,
+video {
+  display: inline-block; /* 1 */
+  vertical-align: baseline; /* 2 */
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+[hidden],
+template {
+  display: none;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+b,
+strong {
+  font-weight: bold;
+}
+dfn {
+  font-style: italic;
+}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+mark {
+  background: #ff0;
+  color: #000;
+}
+small {
+  font-size: 80%;
+}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+img {
+  border: 0;
+}
+svg:not(:root) {
+  overflow: hidden;
+}
+figure {
+  margin: 1em 40px;
+}
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+pre {
+  overflow: auto;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit; /* 1 */
+  font: inherit; /* 2 */
+  margin: 0; /* 3 */
+}
+button {
+  overflow: visible;
+}
+button,
+select {
+  text-transform: none;
+}
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button; /* 2 */
+  cursor: pointer; /* 3 */
+}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+input {
+  line-height: normal;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+input[type="search"] {
+  -webkit-appearance: textfield; /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box; /* 2 */
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+legend {
+  border: 0; /* 1 */
+  padding: 0; /* 2 */
+}
+textarea {
+  overflow: auto;
+}
+optgroup {
+  font-weight: bold;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td,
+th {
+  padding: 0;
+}
+
+
+/*
+* Skeleton V2.0.4
+* Copyright 2014, Dave Gamache
+* www.getskeleton.com
+* Free to use under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+* 12/29/2014
+*/
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box; }
+.column,
+.columns {
+  width: 100%;
+  float: left;
+  box-sizing: border-box; }
+@media (min-width: 400px) {
+  .container {
+    width: 85%;
+    padding: 0; }
+}
+@media (min-width: 550px) {
+  .container {
+    width: 80%; }
+  .column,
+  .columns {
+    margin-left: 4%; }
+  .column:first-child,
+  .columns:first-child {
+    margin-left: 0; }
+
+  .one.column,
+  .one.columns                    { width: 4.66666666667%; }
+  .two.columns                    { width: 13.3333333333%; }
+  .three.columns                  { width: 22%;            }
+  .four.columns                   { width: 30.6666666667%; }
+  .five.columns                   { width: 39.3333333333%; }
+  .six.columns                    { width: 48%;            }
+  .seven.columns                  { width: 56.6666666667%; }
+  .eight.columns                  { width: 65.3333333333%; }
+  .nine.columns                   { width: 74.0%;          }
+  .ten.columns                    { width: 82.6666666667%; }
+  .eleven.columns                 { width: 91.3333333333%; }
+  .twelve.columns                 { width: 100%; margin-left: 0; }
+
+  .one-third.column               { width: 30.6666666667%; }
+  .two-thirds.column              { width: 65.3333333333%; }
+
+  .one-half.column                { width: 48%; }
+
+  /* Offsets */
+  .offset-by-one.column,
+  .offset-by-one.columns          { margin-left: 8.66666666667%; }
+  .offset-by-two.column,
+  .offset-by-two.columns          { margin-left: 17.3333333333%; }
+  .offset-by-three.column,
+  .offset-by-three.columns        { margin-left: 26%;            }
+  .offset-by-four.column,
+  .offset-by-four.columns         { margin-left: 34.6666666667%; }
+  .offset-by-five.column,
+  .offset-by-five.columns         { margin-left: 43.3333333333%; }
+  .offset-by-six.column,
+  .offset-by-six.columns          { margin-left: 52%;            }
+  .offset-by-seven.column,
+  .offset-by-seven.columns        { margin-left: 60.6666666667%; }
+  .offset-by-eight.column,
+  .offset-by-eight.columns        { margin-left: 69.3333333333%; }
+  .offset-by-nine.column,
+  .offset-by-nine.columns         { margin-left: 78.0%;          }
+  .offset-by-ten.column,
+  .offset-by-ten.columns          { margin-left: 86.6666666667%; }
+  .offset-by-eleven.column,
+  .offset-by-eleven.columns       { margin-left: 95.3333333333%; }
+
+  .offset-by-one-third.column,
+  .offset-by-one-third.columns    { margin-left: 34.6666666667%; }
+  .offset-by-two-thirds.column,
+  .offset-by-two-thirds.columns   { margin-left: 69.3333333333%; }
+
+  .offset-by-one-half.column,
+  .offset-by-one-half.columns     { margin-left: 52%; }
+
+}
+html {
+  font-size: 62.5%; }
+body {
+  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #222; }
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300; }
+h1 { font-size: 3.6rem; line-height: 1.2;  letter-spacing: -.1rem;}
+h2 { font-size: 3.4rem; line-height: 1.25; letter-spacing: -.1rem; }
+h3 { font-size: 3.2rem; line-height: 1.3;  letter-spacing: -.1rem; }
+h4 { font-size: 2.8rem; line-height: 1.35; letter-spacing: -.08rem; }
+h5 { font-size: 2.4rem; line-height: 1.5;  letter-spacing: -.05rem; }
+h6 { font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; }
+
+p {
+  margin-top: 0; }
+a {
+  color: #1EAEDB; }
+a:hover {
+  color: #0FA0CE; }
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box; }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box; }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #33C3F0;
+  outline: 0; }
+label,
+legend {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600; }
+fieldset {
+  padding: 0;
+  border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline; }
+label > .label-body {
+  display: inline-block;
+  margin-left: .5rem;
+  font-weight: normal; }
+ul {
+  list-style: circle inside; }
+ol {
+  list-style: decimal inside; }
+ol, ul {
+  padding-left: 0;
+  margin-top: 0; }
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin: 1.5rem 0 1.5rem 3rem;
+  font-size: 90%; }
+li {
+  margin-bottom: 1rem; }
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #E1E1E1; }
+th:first-child,
+td:first-child {
+  padding-left: 0; }
+th:last-child,
+td:last-child {
+  padding-right: 0; }
+button,
+.button {
+  margin-bottom: 1rem; }
+input,
+textarea,
+select,
+fieldset {
+  margin-bottom: 1.5rem; }
+pre,
+blockquote,
+dl,
+figure,
+table,
+p,
+ul,
+ol,
+form {
+  margin-bottom: 2.5rem; }
+.u-full-width {
+  width: 100%;
+  box-sizing: border-box; }
+.u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box; }
+.u-pull-right {
+  float: right; }
+.u-pull-left {
+  float: left; }
+hr {
+  margin-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-width: 0;
+  border-top: 1px solid #E1E1E1; }
+.container:after,
+.row:after,
+.u-cf {
+  content: "";
+  display: table;
+  clear: both; }
+
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+
+@media (min-width: 400px) {}
+@media (min-width: 550px) {}
+@media (min-width: 750px) {}
+@media (min-width: 1000px) {}
+@media (min-width: 1200px) {}
+
+</style>
+
+<style>
+.hll { background-color: #ffffcc }
+.c { color: #408080; font-style: italic } /* Comment */
+.err { border: 1px solid #FF0000 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666666 } /* Operator */
+.ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.cp { color: #BC7A00 } /* Comment.Preproc */
+.cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #408080; font-style: italic } /* Comment.Single */
+.cs { color: #408080; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.gr { color: #FF0000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #00A000 } /* Generic.Inserted */
+.go { color: #888888 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #0044DD } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #7D9029 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.no { color: #880000 } /* Name.Constant */
+.nd { color: #AA22FF } /* Name.Decorator */
+.ni { color: #999999; font-weight: bold } /* Name.Entity */
+.ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.nf { color: #0000FF } /* Name.Function */
+.nl { color: #A0A000 } /* Name.Label */
+.nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.w { color: #bbbbbb } /* Text.Whitespace */
+.mb { color: #666666 } /* Literal.Number.Bin */
+.mf { color: #666666 } /* Literal.Number.Float */
+.mh { color: #666666 } /* Literal.Number.Hex */
+.mi { color: #666666 } /* Literal.Number.Integer */
+.mo { color: #666666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #BB6688 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #0000FF } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
+
+
+
+
+
+<style>
+h1.title {margin-top : 20px}
+img {max-width : 100%}
+
+#From nbconvert
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+
+</HEAD>
+<BODY>
+    <div class ="container">
+        <div class = "row">
+            <div class = "col-md-12 twelve columns">
+<h2>Capsule Networks</h2>
+<ul>
+<li>a capsule captures the likeness of a feature and its variant</li>
+<li>Equivariance is the detection of objects that can transform to each other</li>
+<li>A capsule is a group of neurons that not only capture the likelihood but
+  also the parameters of the specific feature.</li>
+<li>Dynamic routing groups capsules to form a parent capsule, and it
+  calculates the capsule’s output
+-</li>
+</ul>
+<h3>Capsule</h3>
+<p>A capsule is a group of neurons whose outputs represent different
+properties of the same entity.</p>
+<p><img alt="computations inside of a capsule" src="https://cdn-images-1.medium.com/max/2000/1*9Clh98QTBI5R2IDxufRMrg.png" /></p>
+<h3>Dynamic Routing</h3>
+<p>Apply transformation matrix <span class="math">\(W_{ij}\)</span class="math"> to the output <span class="math">\(u_i\)</span class="math"> of the
+previous layer. We transform <span class="math">\(u_i\)</span class="math"> to <em>prediction vector</em> <span class="math">\(\hat{u}_{j|i}\)</span class="math">
+from k-dimension to p-dimension.</p>
+<p><span class="math">\(c_{ij}\)</span class="math"> are <em>coupling coefficients</em> that are calculated by the
+iterative dynamic routing process such that <span class="math">\(\sum_{j} c_{ij} = 1\)</span class="math">.
+Conceptually, <span class="math">\(c_{ij}\)</span class="math"> measures how likely capsule <span class="math">\(i\)</span class="math"> may activate
+capsule <span class="math">\(j\)</span class="math"></p>
+<p><span class="math">\[
+\hat{u}_{j|i} = W_{ij} u_i \\
+s_j = \sum_i c_{ij}  \hat{u}_{j|i}
+\]</span class="math"></p>
+<p>Instead of applying a ReLU function, we apply a squashing function
+to <span class="math">\(s_j\)</span class="math"> so the final output or <em>activity vector</em> <span class="math">\(v_j\)</span class="math"> has length between 0 and 1.</p>
+<p>This function shrinks small vectors to zero and large vectors
+to unit vectors.</p>
+<p><span class="math">\[
+v_{j} = \frac{\| s_{j} \|^2}{ 1 + \| s_{j} \|^2} \frac{s_{j}}{ \| s_{j} \|}  \\
+v_{j} \approx \| s_{j} \| s_{j}  \quad \text{for } s_{j} \text { is small. } \\
+v_{j} \approx \frac{s_{j}}{ \| s_{j} \|}  \quad  \text{for } s_{j} \text { is large. } \\
+\]</span class="math"></p>
+<p><strong>Iterative Dynamic Routing</strong>
+<em>prediction vector</em> <span class="math">\(\hat{u}_{j|i}\)</span class="math"> is the prediction vote
+from capsule <span class="math">\(i\)</span class="math"> to <span class="math">\(j\)</span class="math">. If the activity vector has close similarity
+with the prediction vector, we conclude that both capsules are highly
+related.</p>
+<p>similarity is measured as the scalar product of the prediction and
+activity vector.
+<span class="math">\[
+b_{ij} \gets \hat{u}_{j \vert i} \cdot v_j
+\]</span class="math"></p>
+<p>The <em>coupling coefficients</em> is then measured as the softmax of the
+similarity.
+<span class="math">\[
+c_{ij} = \frac{\exp{b_{ij}}} {\sum_k \exp{b_{ik}} }
+\]</span class="math"></p>
+<p>To make <span class="math">\(b_{ij}\)</span class="math"> more accurate, it is updated iteratively in multiple
+iterations.
+<span class="math">\[
+b_{ij} \gets b_{ij} + \hat{u}_{j \vert i} \cdot v_j
+\]</span class="math"></p>
+<p>Algorithm -</p>
+<p><img alt="" src="https://jhui.github.io/assets/capsule/alg.jpg" /></p>
+<blockquote>
+<p>Routing a capsule to the capsule in the layer above based on relevancy
+  is called Routing-by-agreement.</p>
+</blockquote>
+<h3>Matrix Capsule</h3>
+<p>Each capsule has a logistic unit to represent the presence of an
+entity and a 4x4 matrix which could learn to represent the
+relationship between that entity and the viewer (the pose).</p>
+<p>Capsules use high-dimensional coincidence filtering: a familiar
+object can be detected by looking for agreement between votes
+for its pose matrix.</p>
+<ul>
+<li>The set of capsules in layer <span class="math">\(L\)</span class="math"> is denoted by <span class="math">\(\Sigma_L\)</span class="math">.</li>
+<li>Each capsule has a 4x4 pose matrix <span class="math">\(M\)</span class="math">. and an activation
+  probabilty <span class="math">\(a\)</span class="math">.</li>
+<li>in between each capsule <span class="math">\(i\)</span class="math"> in layer L and <span class="math">\(j\)</span class="math"> in layer <span class="math">\(L+1\)</span class="math">
+  is a 4x4 transformation matrix <span class="math">\(W_{ij}\)</span class="math">. These and two biases
+  per capsule are the only stored parameter and learned
+  descriminatively.</li>
+</ul>
+<h3>EM for Routing by Agreement - EM Routing</h3>
+<ul>
+<li>Using minimum description length principle the choices when
+  deciding whether or not to activate the higher layer</li>
+<li>Choice 0:<ul>
+<li>if we donot activate we must pay a fixed cost of <span class="math">\(-\beta_u\)</span class="math"> per
+  data point for describing the poses of all the lower level
+  capsules that are assigned to the higher-level capsule</li>
+</ul>
+</li>
+<li>Choice 1:<ul>
+<li>if we do activate we must pay a fixed cost of <span class="math">\(-\beta_a\)</span class="math">
+  for coding its mean and variance and the fact that it is active</li>
+<li>then pay <em>additional cost</em> pro-rated by the assignment probabilties
+  for describing the <em>descripancies</em> between the <em>lower level mean</em>
+  and the values predicted for them when the <em>mean</em> of the
+  <em>higher level capsule</em> is used to <em>predict</em> them via the
+  <em>inverse transformation matrix</em>.
+  A much simpler way to compute the <em>cost of describing a datapoint</em>:</li>
+<li>is to use <em>negative log probabilty density</em> of that datapoint's
+    <em>vote</em> under <em>Gaussian distribution fitted</em> by whatever
+    <em>higher capsule</em> it gets assigned to.</li>
+<li>this is incorrect - but is used becoz it requires much less
+    computation.</li>
+<li>The incremental cost of exaplaining a whole data point <span class="math">\(i\)</span class="math">
+  by using an active capsule <span class="math">\(j\)</span class="math"></li>
+<li>is sum over all dimensions of the cost of explaining each dimension
+    h of vote <span class="math">\(V_{ij}\)</span class="math">.</li>
+<li>= <span class="math">\(-\ln (P_{i|j}^h)\)</span class="math"> where <span class="math">\(P_{i|j}^h\)</span class="math"> is the probabilty density
+    of <span class="math">\(h^{th}\)</span class="math"> component of the vectorized vote <span class="math">\(V_{ij}\)</span class="math"> under
+    <span class="math">\(j\)</span class="math">'s Gaussian model for sdimension <span class="math">\(h\)</span class="math">
+    which has variance <span class="math">\((\sigma_j^j)^2\)</span class="math"> and mean <span class="math">\(\mu_j^h\)</span class="math">
+    <span class="math">\(\mu_j\)</span class="math"> is the vectorized version of <span class="math">\(j\)</span class="math">'s pose matrix <span class="math">\(M_j\)</span class="math">.</li>
+</ul>
+</li>
+</ul>
+<p><span class="math">\[
+\begin{align*}
+P_{i|j}^h &amp;= \frac{1}{\sqrt{2\pi(\sigma_j^h)^2}} \exp{(-\frac{(V_{ij}^h - \mu_j^h)^2}{2(\sigma_j^h)^2})} \\
+\ln(P_{i|j}^h) &amp;= -\frac{(V_{ij}^h - \mu_j^h)^2}{2(\sigma_j^h)^2} -\ln(\sigma_j^h)-\ln(2\pi)/2
+\end{align*}
+\]</span class="math"></p>
+<p>Summing all lower-level capsules for a single dimension, <span class="math">\(h\)</span class="math">, of <span class="math">\(j\)</span class="math"> we get:
+<span class="math">\[
+\begin{align*}
+cost_j^h  &amp;= \sum_i -r_{ij}ln(P_{i|j}^h) \\
+&amp;= \frac{\sum_i r_{ij}(V_{ij}^h - \mu_j^h)^2}{2(\sigma_j^h)^2} + (\ln(\sigma_j^h)+\ln(2\pi)/2)\sum_i r_{ij} \\
+&amp;= (\ln(\sigma_j^h) + \frac{1}{2} + \ln(2\pi)/2)\sum_i r_{ij}
+\end{align*}
+\]</span class="math">
+where <span class="math">\(r_{ij}\)</span class="math"> is the amount of data assigned to <span class="math">\(j\)</span class="math"> and <span class="math">\(V_{ij}^h\)</span class="math">
+is the value on dimension <span class="math">\(h\)</span class="math"> of <span class="math">\(V\)</span class="math">.</p>
+<p>The difference between Choice 0 and 1 is then put through
+logistic function on each iteration to determine higer level
+capsule's activation probabilty.</p>
+<p>Turning on capsule <span class="math">\(j\)</span class="math"> increases the description length for the means
+of the lower level capsules assigned to <span class="math">\(j\)</span class="math"> from <span class="math">\(-\beta_u\)</span class="math"> per lower
+level capsule to <span class="math">\(-\beta_a\)</span class="math"> plus the sum of the cost over all dimensions.</p>
+<p><span class="math">\[
+a_j = logistic(\lambda(\beta_a - \beta_u\sum_i r_{ij} - \sum_{h} cost_j^h))
+\]</span class="math">
+\lambda is an inverse temperature parameter.</p>
+<p><img alt="EM Routing" src="figures/em-routing.png" /></p>
+<h3>CapsNet</h3>
+<ol>
+<li>ReLU Conv1</li>
+<li>Convolution layer with 9x9 kernels output 256 channels</li>
+<li>stride 1, no-padding with ReLU</li>
+<li>spatial dimension reduced to 20x20, output is 256 20x20</li>
+<li>Primary capsules</li>
+<li>generate 8D vectors</li>
+<li>uses 8x32 kernel to generate 32 8D capsules.</li>
+<li>Primary capsule uses Convolutional 9x9 kernels with stride 2 and
+   no padding to reduce spatial dimension from 20x20 to 6x6
+   (<span class="math">\(\lfloor \frac{20-9}{2} \rfloor + 1 = 6\)</span class="math">).</li>
+<li>So we have 32x6x6 capsules (8D vector).</li>
+<li>output 6x6x32x8</li>
+<li>DigiCaps</li>
+<li>which apply transformation matrix <span class="math">\(W_{ij}\)</span class="math"> with shape 16x8
+   to convert 8D capsule into 16D capsule for each class <span class="math">\(j\)</span class="math"> from 1 to 10.</li>
+<li>The shape of DigiCaps is 10 16D vectors.</li>
+<li>Each vector <span class="math">\(v_j\)</span class="math"> acts as capsule for class <span class="math">\(j\)</span class="math">.</li>
+<li>The probabilty to classify as <span class="math">\(j\)</span class="math"> is <span class="math">\(\| v_j \|\)</span class="math">.</li>
+<li>FC1 Fully connected with ReLU - output 512x1</li>
+<li>FC2 Fully connected with ReLU - output 1024</li>
+<li>Output image - Fully connected with sigmoid 28x28 */</li>
+</ol>
+<h3>Loss Function (Margin Loss)</h3>
+<p>Capsules use a separate margin loss <span class="math">\(L_c\)</span class="math"> for each category <span class="math">\(c\)</span class="math">
+digit present in the picture.</p>
+<p><span class="math">\[
+L_c = T_c \max(0, m^+ − \|v_c\|)^2 + λ (1 − T_c) \max(0, \|v_c\| − m^−)^2
+\]</span class="math"></p>
+<p>where  <span class="math">\(T_c=1\)</span class="math"> if an object of class <span class="math">\(c\)</span class="math"> is present.
+<span class="math">\(m^+=0.9\)</span class="math"> and <span class="math">\(m^−=0.1\)</span class="math">.
+<span class="math">\(\lambda\)</span class="math"> down-weighting (default 0.5) stops the initial learning
+from shrinking the activity vectors of all classes.</p>
+<p><img alt="CapsNet Loss Function" src="https://cdn-images-1.medium.com/max/2000/1*y-bVFuiLReqSSdmdZ6wAmA.png" />
+<img alt="Loss function Value for Correct and Incorrect DigiCaps" src="https://cdn-images-1.medium.com/max/1600/1*9T2t_C5C1RjiDlW58rl0sA.png" /></p>
+<p><strong>Reconstruction Loss</strong>
+<span class="math">\[
+\| \text{image} - \text{reconstructed image} \|
+\]</span class="math">
+is added to the loss function.
+The reconstruction loss is multiple by a regularization factor
+(0.0005) so it does not dominate over the marginal loss.</p>
+<p><strong>Various transformation capsule learns</strong></p>
+<p>This image, from Hinton’s first paper, shows what happens
+to numbers when perturbing one dimension of the capsule output.
+<img alt="" src="https://jhui.github.io/assets/capsule/dim.png" /></p>
+<p><strong>Capsule vs traditional</strong>
+- activation of capsule is based on a comparision between multiple incoming
+  pose predictions whereas in standard neural net it is between single
+  incoming activity vector and a learned weight vector
+-
+<img alt="capsule vs traditional" src="https://raw.githubusercontent.com/naturomics/CapsNet-Tensorflow/master/imgs/capsuleVSneuron.png" /></p>
+<h3>Resources</h3>
+<ul>
+<li><a href="https://medium.com/ai³-theory-practice-business/understanding-hintons-capsule-networks-part-i-intuition-b4b559d1159b">Understanding Hinton’s Capsule Networks. Part I: Intuition</a></li>
+<li><a href="https://medium.com/ai³-theory-practice-business/understanding-hintons-capsule-networks-part-ii-how-capsules-work-153b6ade9f66">Understanding Hinton’s Capsule Networks. Part II: How Capsules Work.</a></li>
+<li><a href="https://github.com/naturomics/CapsNet-Tensorflow">TensorFlow implementation</a></li>
+<li><a href="https://github.com/aisummary/awesome-capsule-networks">Awesome Capsule Networks</a></li>
+<li><a href="https://jhui.github.io/2017/11/03/Dynamic-Routing-Between-Capsules/">Understanding Dynamic Routing between Capsules (Capsule Networks)</a></li>
+<li><a href="https://jhui.github.io/2017/11/14/Matrix-Capsules-with-EM-routing-Capsule-Network/">Understanding Matrix capsules with EM Routing (Based on Hinton's Capsule Networks)</a></li>
+<li><a href="https://openreview.net/pdf?id=HJWLfGWRb">Matrix Capsules with EM Routing</a></li>
+<li>
+<h2><a href="https://towardsdatascience.com/demystifying-matrix-capsules-with-em-routing-part-1-overview-2126133a8457">Demystifying “Matrix Capsules with EM Routing.” Part 1: Overview</a></h2>
+</li>
+</ul>
+    <HR/>
+    <div class="footer">
+      <p>Published from <a href="capsule.pmd">capsule.pmd</a>
+    using <a href="http://mpastell.com/pweave">Pweave</a> 0.30.2
+    on 31-03-2018.<p></div>
+
+            </div>
+        </div>
+    </div>
+  </BODY>
+</HTML>

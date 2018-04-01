@@ -1,0 +1,143 @@
+## Hidden markov model
+
+$f(x)$ can be defined as a conditional model p(y|x)
+
+$f(x) = \underset{y \in  Y}{\operatorname{argmax}} p(y|x)$
+
+Alternative approach is to define a generative model, where we model
+the joint $p(x, y)$
+
+can decomponse like this
+$p(x, y) = p(y)p(x|y)$
+and then estimate two models separately.
+
+- $p(y)$ is prior probabilty distribution
+- $p(x|y)$ is probabilty of generating input $x$ given $y$
+
+using Bayes rule
+$f(x) =  \underset{y \in  Y}{\operatorname{argmax}} p(y|x)$
+$f(x) =  \underset{y \in  Y}{\operatorname{argmax}} \frac{p(y)p(x|y)}{p(x)}$
+$f(x) =  \underset{y \in  Y}{\operatorname{argmax}} p(y)p(x|y)$
+becoz denominator does not depend on $y$
+
+Models that decompose a joint probability into into terms $p(y)$
+and $p(x|y)$ are often called noisy-channel models
+The model $p(x|y)$ can be interpreted as a “channel”
+which takes a label $y$ as its input, and corrupts it to
+produce $x$ as its output.
+
+
+### Generative Tagging Models
+Assume a finite set of words $V$, and a finite set of tags $K$.
+Define $S$ to be the set of all sequence/tag-sequence pairs $\langle x_1...x_n,y_1...y_n\rangle$,
+such that $n \geq 0$, $x_i \in V \forall i=1..n$ and $y_i \in K$  $\forall i = 1...n$
+A generative tagging model is then a function $p$ such that:
+
+1. For any $\langle x_1 ...x_n,y_1 ...y_n \rangle \in S$,
+$$p(x_1 ...x_n,y_1 ...y_n) \geq 0$$
+2. In addition,
+$$ \underset{\langle x_1...x_n,y_1...y_n \rangle \in S}{\sum} p(x_1 ...x_n,y_1 ...y_n) = 1
+$$
+
+Hence $p(x_1...x_n, y_1...y_n)$ is a probability distribution over pairs of sequences (i.e., a probability distribution over the set S).
+
+Given a generative tagging model, the function from sentences $x_1 . . . x_n$
+to tag sequences $y_1 . . . y_n$ is defined as
+
+$$
+f(x) =  \underset{y_1...y_n}{\operatorname{argmax}} p(x_1...x_n,y_1...y_n)
+$$
+
+Thus for any input $x_1...x_n$, we take the highest probability
+tag sequence as the output from the model.
+
+
+### Trigram Hidden Markov Models (Trigram HMMs)
+A trigram HMM consists of a finite set $V$ of possible words,
+and a finite set $K$ of possible tags, together with the following parameters:
+
+- a parameter
+$$
+q(s|u,v)
+$$
+for any trigram $(u,v,s)$ such that $s \in K \cup {STOP}$, and $u,v \in V \cup {*}$.
+The value for $q(s|u, v)$ can be interpreted as the probability of seeing the
+tag $s$ immediately after the bigram of tags $(u, v)$.
+- a parameter
+$$ e(x|s) $$
+for any $x \in V, s \in K$. The value for $e(x|s)$ can be interpreted as the $e(x|s)$
+probability of seeing observation $x$ paired with state $s$.
+
+Define $S$ to be the set of all sequence/tag-sequence pairs
+$\langle x_1 . . . x_n, y_1 . . . y_n+1 \rangle$ such that $n \geq 0$, $x_i \in V$
+for $i=1...n,y_i \in K$ for $i=1...n$, and $y_n+1 = STOP$.
+
+We then define the probability for any $\langle x_1 ...x_n,y_1 ...y_n+1\rangle \in S$
+
+$$
+p(x_1 . . . x_n, y_1 . . . y_n+1) = \prod\limits_{i=1}^{n+1} q(yi|yi−2, yi−1) \prod\limits_{i=1}^{n} e(xi|yi)
+$$
+
+where we have assumed that $y_0 = y_{−1} = *$.
+
+#### Independence assumptions in Trigram HMM
+We have assumed that the sequence $Y_1 . . . Y_n+1$ is a second-order Markov
+sequence, where each state depends only on the previous two states in the sequence.
+
+We have assumed that the value for the random variable $X_i$ depends only on
+the value of $Y_i$
+
+#### Estimating the parameters in Trigram HMM
+- $c(u, v, s)$ to be the number of times the sequence of three states $(u, v, s)$ is seen
+- $c(u, v)$ to be the number of times the tag bigram $(u, v)$ is seen
+- $c(s)$ to be the number of times that the state $s$ is seen in the corpus
+- $c(s \sim x)$ to be the number of times state s is seen paired sith observation x in the corpus
+
+the maximum likelihood estimate is then
+$$
+q(s|u,v) = \frac{c(u, v, s)}{c(u, v)}
+$$
+and
+$$
+e(x|s) = \frac{c(s \sim x)}{c(s)}
+$$
+
+#### Decoding with HMMs: Viterbi algorithm
+The problem of finding the most likely tag sequence for an input sentence $x_1 . . . x_n$
+$$
+\underset{y_1...y_n+1}{\operatorname{argmax}} p(x_1 ...x_n,y_1 ...y_n+1)
+$$
+
+where the $\operatorname{argmax}$ is taken over all sequences
+$y_1 . . . y_n+1$ such that $y_i \in K$ for $i = 1...n$, and $y_n+1 = STOP$.
+
+**Basic Algorithm**
+
+The input to the algorithm is a sentence $x_1 . . . x_n$.
+Given this sentence, for any $k \in {1...n}$,
+for any sequence $y_1 ...y_k$ such that $y_i \in K$ for $i = 1...k$ we define the function
+
+$$
+r(y_1 . . . y_k) = \prod\limits_{i=1}^{k} q(y_i|y_i−2,y_i−1) \prod\limits_{i=1}^{k} e(x_i|y_i)
+$$
+
+$$
+p(x_1 ...x_n,y_1 ...y_n+1) = r(y_1 ...y_n)×q(y_n+1|y_n−1,y_n)
+$$
+$$
+= r(y_1 . . . y_n) × q(STOP|y_n−1, y_n)
+$$
+
+Next, for any any $k \in {1...n}$, for any $u \in K$, $v \in K$, define $S(k,u,v)$
+to be the set of sequences $y_1...y_k$ such that $y_k−1 = u, y_k = v$, and
+$y_i \in K$ for $i = 1...k$. Thus $S(k,u,v)$ is the set of all tag sequences of
+length $k$, which end in the tag bigram $(u, v)$.
+
+$$
+\pi (k,u,v) = \operatorname{max}\limits_{\langle y_1...y_k \rangle \in S(k,u,v)} r(y_1 ...y_k)
+$$
+
+
+
+### Resources
+- [HMM Notes](http://www.cs.columbia.edu/~mcollins/courses/nlp2011/notes/hmms.pdf)

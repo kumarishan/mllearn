@@ -369,3 +369,5 @@ knn_clf.fit(X_train, y_multilabel)
 
 y_train_knn_pred = cross_val_predict(knn_clf, X_train, y_multilabel, cv=3)
 f1_score(y_train, y_train_knn_pred, average="macro")
+
+# %%

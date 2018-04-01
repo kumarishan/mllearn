@@ -1,0 +1,24 @@
+## Textual Entailment
+To categorize an ordered pair of sentences into three categories
+- positive entailment - when you can use the first sentence to prove
+  that a second sentence is true
+- negative entailment - when the first sentence can be used to
+  disprove the second sentence
+- neutral entailment - if the two sentences have no correlation
+
+Eg usages
+- question-answering systems may use textual entailment to verify an
+  answer from stored information.
+- Textual entailment may also enhance document summarization by
+  filtering out sentences that don’t include new information
+
+A direcUonal relation between two text fragments:
+Text (t) and Hypothesis (h)
+
+t entails h ($t \Rightarrow h$) if
+humans reading t will infer that h is most likely true
+
+
+
+### Resources
+- [Textual entailment with TensorFlow](https://www.oreilly.com/learning/textual-entailment-with-tensorflow)

@@ -1,0 +1,284 @@
+## Capsule Networks
+
+- a capsule captures the likeness of a feature and its variant
+- Equivariance is the detection of objects that can transform to each other
+- A capsule is a group of neurons that not only capture the likelihood but
+  also the parameters of the specific feature.
+- Dynamic routing groups capsules to form a parent capsule, and it
+  calculates the capsule’s output
+-
+
+### Capsule
+A capsule is a group of neurons whose outputs represent different
+properties of the same entity.
+
+
+![computations inside of a capsule](https://cdn-images-1.medium.com/max/2000/1*9Clh98QTBI5R2IDxufRMrg.png)
+
+### Dynamic Routing
+
+Apply transformation matrix $W_{ij}$ to the output $u_i$ of the
+previous layer. We transform $u_i$ to _prediction vector_ $\hat{u}_{j|i}$
+from k-dimension to p-dimension.
+
+$c_{ij}$ are _coupling coefficients_ that are calculated by the
+iterative dynamic routing process such that $\sum_{j} c_{ij} = 1$.
+Conceptually, $c_{ij}$ measures how likely capsule $i$ may activate
+capsule $j$
+
+$$
+\hat{u}_{j|i} = W_{ij} u_i \\
+s_j = \sum_i c_{ij}  \hat{u}_{j|i}
+$$
+
+Instead of applying a ReLU function, we apply a squashing function
+to $s_j$ so the final output or _activity vector_ $v_j$ has length between 0 and 1.
+
+This function shrinks small vectors to zero and large vectors
+to unit vectors.
+
+$$
+v_{j} = \frac{\| s_{j} \|^2}{ 1 + \| s_{j} \|^2} \frac{s_{j}}{ \| s_{j} \|}  \\
+v_{j} \approx \| s_{j} \| s_{j}  \quad \text{for } s_{j} \text { is small. } \\
+v_{j} \approx \frac{s_{j}}{ \| s_{j} \|}  \quad  \text{for } s_{j} \text { is large. } \\
+$$
+
+**Iterative Dynamic Routing**
+_prediction vector_ $\hat{u}_{j|i}$ is the prediction vote
+from capsule $i$ to $j$. If the activity vector has close similarity
+with the prediction vector, we conclude that both capsules are highly
+related.
+
+similarity is measured as the scalar product of the prediction and
+activity vector.
+$$
+b_{ij} \gets \hat{u}_{j \vert i} \cdot v_j
+$$
+
+The _coupling coefficients_ is then measured as the softmax of the
+similarity.
+$$
+c_{ij} = \frac{\exp{b_{ij}}} {\sum_k \exp{b_{ik}} }
+$$
+
+To make $b_{ij}$ more accurate, it is updated iteratively in multiple
+iterations.
+$$
+b_{ij} \gets b_{ij} + \hat{u}_{j \vert i} \cdot v_j
+$$
+
+Algorithm -
+
+![](https://jhui.github.io/assets/capsule/alg.jpg)
+
+> Routing a capsule to the capsule in the layer above based on relevancy
+  is called Routing-by-agreement.
+
+### Matrix Capsule
+Each capsule has a logistic unit to represent the presence of an
+entity and a 4x4 matrix which could learn to represent the
+relationship between that entity and the viewer (the pose).
+
+Capsules use high-dimensional coincidence filtering: a familiar
+object can be detected by looking for agreement between votes
+for its pose matrix.
+
+- The set of capsules in layer $L$ is denoted by $\Sigma_L$.
+- Each capsule has a 4x4 pose matrix $M$. and an activation
+  probabilty $a$.
+- in between each capsule $i$ in layer L and $j$ in layer $L+1$
+  is a 4x4 transformation matrix $W_{ij}$. These and two biases
+  per capsule are the only stored parameter and learned
+  descriminatively.
+
+### EM for Routing by Agreement - EM Routing
+When routing we are making the assumption that each capsule in layer
+$L$ is activated because it is part of some 'whole' in the next layer.
+We assume there is soem latent variable that explaing which 'whole'
+our information came from. Trying to infer the probabilty that each
+matrix output came from the higher oder feature in level $L+1$.
+
+EM attempts to maximize the likelihood that our data at layer $L$
+is exaplined by the capsules in layer $L+1$.
+
+The routing process is like fitting a mixture of gaussin using EM.
+where higher level capsules play the role of the gaussian. and the
+means of the activated lower-level capsules for a single image
+play the role of the datapoints.
+
+**E-Step**
+is used to determine, for each datapoint, the probability with
+which it is assigned to each of the Gaussians.
+
+Adjusts the assignment probabilities for each datapoint to
+minimize a quantity called “free energy” which is the expected
+energy minus the entropy.
+
+We can minimize the expected energy by assigning each datapoint
+with probabilty 1 to whichever Gaussian gives it the lowest energy
+(i. e. the highest probability density).
+
+We can maximize the entropy by assigning each datapoint with equal
+probability to every Gaussian ignoring the energy.
+
+The best trade-off is to make the assignment probabilities be
+proportional to exp(−E). This is known as the Boltzmann distribution
+in physics or the posterior distribution in statistics.
+
+ E-step minimizes the free energy w.r.t. the assignment distribution.
+
+
+**M-Step**
+for each Gaussian consists of finding the mean of these weighted
+datapoints and the variance about that mean.
+The M-step holds the assignment probabilities constant and
+adjusts each Gaussian to maximize the sum of the weighted log
+probabilities that the Gaussian would generate the datapoints
+assigned to it.
+
+M-step leaves the entropy term unchanged and minimizes the
+expected energy w.r.t. the parameters of the Gaussians.
+
+
+_free energy is an objective function for both steps_
+
+
+
+
+- Using minimum description length principle the choices when
+  deciding whether or not to activate the higher layer
+  - Choice 0:
+    - if we donot activate we must pay a fixed cost of $-\beta_u$ per
+      data point for describing the poses of all the lower level
+      capsules that are assigned to the higher-level capsule
+  - Choice 1:
+    - if we do activate we must pay a fixed cost of $-\beta_a$
+      for coding its mean and variance and the fact that it is active
+    - then pay _additional cost_ pro-rated by the assignment probabilties
+      for describing the _descripancies_ between the _lower level mean_
+      and the values predicted for them when the _mean_ of the
+      _higher level capsule_ is used to _predict_ them via the
+      _inverse transformation matrix_.
+      A much simpler way to compute the _cost of describing a datapoint_:
+      - is to use _negative log probabilty density_ of that datapoint's
+        _vote_ under _Gaussian distribution fitted_ by whatever
+        _higher capsule_ it gets assigned to.
+      - this is incorrect - but is used becoz it requires much less
+        computation.
+    - The incremental cost of exaplaining a whole data point $i$
+      by using an active capsule $j$
+      - is sum over all dimensions of the cost of explaining each dimension
+        h of vote $V_{ij}$.
+      - = $-\ln (P_{i|j}^h)$ where $P_{i|j}^h$ is the probabilty density
+        of $h^{th}$ component of the vectorized vote $V_{ij}$ under
+        $j$'s Gaussian model for sdimension $h$
+        which has variance $(\sigma_j^j)^2$ and mean $\mu_j^h$
+        $\mu_j$ is the vectorized version of $j$'s pose matrix $M_j$.
+
+$$
+\begin{align*}
+P_{i|j}^h &= \frac{1}{\sqrt{2\pi(\sigma_j^h)^2}} \exp{(-\frac{(V_{ij}^h - \mu_j^h)^2}{2(\sigma_j^h)^2})} \\
+\ln(P_{i|j}^h) &= -\frac{(V_{ij}^h - \mu_j^h)^2}{2(\sigma_j^h)^2} -\ln(\sigma_j^h)-\ln(2\pi)/2
+\end{align*}
+$$
+
+Summing all lower-level capsules for a single dimension, $h$, of $j$ we get:
+$$
+\begin{align*}
+cost_j^h  &= \sum_i -r_{ij}ln(P_{i|j}^h) \\
+&= \frac{\sum_i r_{ij}(V_{ij}^h - \mu_j^h)^2}{2(\sigma_j^h)^2} + (\ln(\sigma_j^h)+\ln(2\pi)/2)\sum_i r_{ij} \\
+&= (\ln(\sigma_j^h) + \frac{1}{2} + \ln(2\pi)/2)\sum_i r_{ij}
+\end{align*}
+$$
+where $r_{ij}$ is the amount of data assigned to $j$ and $V_{ij}^h$
+is the value on dimension $h$ of $V$.
+
+The difference between Choice 0 and 1 is then put through
+logistic function on each iteration to determine higer level
+capsule's activation probabilty.
+
+Turning on capsule $j$ increases the description length for the means
+of the lower level capsules assigned to $j$ from $-\beta_u$ per lower
+level capsule to $-\beta_a$ plus the sum of the cost over all dimensions.
+
+$$
+a_j = logistic(\lambda(\beta_a - \beta_u\sum_i r_{ij} - \sum_{h} cost_j^h))
+$$
+$\lambda$ is an inverse temperature parameter.
+
+![EM Routing](figures/em-routing.png)
+
+
+### CapsNet
+
+1. ReLU Conv1
+  * Convolution layer with 9x9 kernels output 256 channels
+  * stride 1, no-padding with ReLU
+  * spatial dimension reduced to 20x20, output is 256 20x20
+2. Primary capsules
+  * generate 8D vectors
+  * uses 8x32 kernel to generate 32 8D capsules.
+  * Primary capsule uses Convolutional 9x9 kernels with stride 2 and
+   no padding to reduce spatial dimension from 20x20 to 6x6
+   ($\lfloor \frac{20-9}{2} \rfloor + 1 = 6$).
+  * So we have 32x6x6 capsules (8D vector).
+  * output 6x6x32x8
+3. DigiCaps
+  * which apply transformation matrix $W_{ij}$ with shape 16x8
+   to convert 8D capsule into 16D capsule for each class $j$ from 1 to 10.
+  * The shape of DigiCaps is 10 16D vectors.
+  * Each vector $v_j$ acts as capsule for class $j$.
+  * The probabilty to classify as $j$ is $\| v_j \|$.
+4. FC1 Fully connected with ReLU - output 512x1
+5. FC2 Fully connected with ReLU - output 1024
+6. Output image - Fully connected with sigmoid 28x28 */
+
+
+### Loss Function (Margin Loss)
+Capsules use a separate margin loss $L_c$ for each category $c$
+digit present in the picture.
+
+$$
+L_c = T_c \max(0, m^+ − \|v_c\|)^2 + λ (1 − T_c) \max(0, \|v_c\| − m^−)^2
+$$
+
+where  $T_c=1$ if an object of class $c$ is present.
+$m^+=0.9$ and $m^−=0.1$.
+$\lambda$ down-weighting (default 0.5) stops the initial learning
+from shrinking the activity vectors of all classes.
+
+![CapsNet Loss Function](https://cdn-images-1.medium.com/max/2000/1*y-bVFuiLReqSSdmdZ6wAmA.png)
+![Loss function Value for Correct and Incorrect DigiCaps](https://cdn-images-1.medium.com/max/1600/1*9T2t_C5C1RjiDlW58rl0sA.png)
+
+**Reconstruction Loss**
+$$
+\| \text{image} - \text{reconstructed image} \|
+$$
+is added to the loss function.
+The reconstruction loss is multiple by a regularization factor
+(0.0005) so it does not dominate over the marginal loss.
+
+
+**Various transformation capsule learns**
+
+This image, from Hinton’s first paper, shows what happens
+to numbers when perturbing one dimension of the capsule output.
+![](https://jhui.github.io/assets/capsule/dim.png)
+
+
+**Capsule vs traditional**
+- activation of capsule is based on a comparision between multiple incoming
+  pose predictions whereas in standard neural net it is between single
+  incoming activity vector and a learned weight vector
+-
+![capsule vs traditional](https://raw.githubusercontent.com/naturomics/CapsNet-Tensorflow/master/imgs/capsuleVSneuron.png)
+
+### Resources
+- [Understanding Hinton’s Capsule Networks. Part I: Intuition](https://medium.com/ai³-theory-practice-business/understanding-hintons-capsule-networks-part-i-intuition-b4b559d1159b)
+- [Understanding Hinton’s Capsule Networks. Part II: How Capsules Work.](https://medium.com/ai³-theory-practice-business/understanding-hintons-capsule-networks-part-ii-how-capsules-work-153b6ade9f66)
+- [TensorFlow implementation](https://github.com/naturomics/CapsNet-Tensorflow)
+- [Awesome Capsule Networks](https://github.com/aisummary/awesome-capsule-networks)
+- [Understanding Dynamic Routing between Capsules (Capsule Networks)](https://jhui.github.io/2017/11/03/Dynamic-Routing-Between-Capsules/)
+- [Understanding Matrix capsules with EM Routing (Based on Hinton's Capsule Networks)](https://jhui.github.io/2017/11/14/Matrix-Capsules-with-EM-routing-Capsule-Network/)
+- [Matrix Capsules with EM Routing](https://openreview.net/pdf?id=HJWLfGWRb)
+- [Demystifying “Matrix Capsules with EM Routing.” Part 1: Overview](https://towardsdatascience.com/demystifying-matrix-capsules-with-em-routing-part-1-overview-2126133a8457)

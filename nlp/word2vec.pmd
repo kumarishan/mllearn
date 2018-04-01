@@ -1,0 +1,148 @@
+## Word2Vec
+
+**Motivation**
+Vector space models embedd words in a continuous vector space where
+semantically similar words are mapped to nearby points
+
+Distribution hypothesis - states that words that appear in the same context
+share semantic meaning
+
+The different approaches can be categorized as
+- count based methods - LSA
+  computes the statistics of how often some word co-occure with their neighbor
+  in the corpus and then map these count statistics to a small dense vector
+- predictive models - Neural Probabilistic Language models
+  directly try to predict a word from its neighbors in terms of learned, small
+  dense embedding vectors
+
+Word2Vec comes in two flavors
+- CBOW
+  - predicts target words from source context words
+  - smoothes over a lot of distributional information, by treating an
+    entire context as one observation
+  - useful for small dataset
+- Skip-Gram
+  - predicts source context wrods from the target words
+  - treats each context target pair as new observation
+  - tends to do better on large datasets
+
+
+
+
+
+- 10000 words -> hidden layer without any activation function
+- one-hot vector of dim 10000 as input
+- output sofmax layer classfier layer
+- while training the input and output are both one-hot vector
+- training set is bascially a pair of input-output word -- where output word
+  is the one in the vicinity of the input word
+
+
+**Model**
+
+The hidden layer weight matrix (10000 x 300) is what is the
+word vector lookup table that is learned.
+
+When we multiply 1x10000 with 10000x300 we effectively select
+the row weight that corresponds to 1 in one-hot input vector.
+Therefore the weight matrix is effectively the lookup table.
+
+The output layer is again 10,000 sofmax classifier layer that
+gives probabilty of each of the vocabulary word to be near to
+the input word.
+
+each output neuron as a weight vector 300x1 which it multiplies
+with the input vector and passes thru $exp(x)$ to get the
+probability.
+
+
+**Intuituion**
+
+If two different words have very similar “contexts”
+then our model needs to output very similar results for these
+two words therefore their word vectors should also be similar.
+
+Could handle stemming also as ant and ants should have very similar
+context. Others like synonyms and related words like engine and
+transmission.
+
+### Tweaks to improve upon the number of weights 3M each layer
+[Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/pdf/1310.4546.pdf)
+
+There are three innovations in this second paper:
+- Treating common word pairs or phrases as single “words” in their model.
+- Subsampling frequent words to decrease the number of training examples.
+- Modifying the optimization objective with a technique they called
+  “Negative Sampling”, which causes each training sample to update only
+  a small percentage of the model’s weights.
+
+
+**Word phrases**
+
+After addition of word phrases the vocabulary became 3M words.
+Used Phrase detection to convert words to phrases. They used simple
+data driven approach to detect phrases.
+$$
+score(w_i, w_j) = \frac{count(w_iw_j) - \delta}{count(w_i) * count(w_j)}
+$$
+
+where $\delta$ is used as a discounting coefficient and prevents
+too many phrases consisting of very infrequent words to be formed.
+
+Each pass only looks at combinations of 2 words, but can be run
+multiple times to get longer phrases. They ran 2-4 times.
+
+**Subsampling Frequent words**
+
+probabilty with which to keep a given word in the vocabulary.
+$$
+P(w_i) = (\sqrt{\frac{z(w_i)}{0.001}} + 1).\frac{0.001}{z(w_i)}
+$$
+
+```python term=True
+
+```
+
+**Negative Sampling**
+
+Good mathematical montivation for this is - the updates it proposes
+approximate the updates of the softmax function in the limit.
+
+We randomly select just a small number of negative words and learn
+with their output only set to 0. According to paper 5-20 negative
+words works well for small dataset and with huge u can select only
+2-5 negative words
+
+So in the output layer instead of 3M 300x10000 updates, we will be
+updating only for positive and 5 negative wrods therefore only
+300x6, 1800 weights.
+
+At input layer we any way update only the input word, so no chnages
+their.
+
+Negative words are selected using unigram distribution.
+
+The probability for selecting a word as a negative sample is related
+to its frequency, with more frequent words being more likely to be
+selected as negative samples.
+
+$$
+P(w_i) = \frac{f(w_i)^\frac{3}{4}}{\sum\limits_{j=0}^{n} (f(w_i)^\frac{3}{4})}
+$$
+
+In tensorflow we can use a similar noice-contrastive estimation ```tf.nn.nce_loss()```
+
+
+### Evaluating
+One simple way to evaluate embeddings is to directly use them to predict
+syntactic and semantic relationships like king is to queen as father is to ?.
+This is called *analogical reasoning*
+
+
+
+
+### Resources
+- [Tutorial](http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/)
+- [Vector Representations of Word](https://www.tensorflow.org/tutorials/word2vec)
+- [Don’t count, predict](http://clic.cimec.unitn.it/marco/publications/acl2014/baroni-etal-countpredict-acl2014.pdf)
+- [Learning word embeddings efficiently with noise-contrastive estimation](https://papers.nips.cc/paper/5165-learning-word-embeddings-efficiently-with-noise-contrastive-estimation.pdf)
