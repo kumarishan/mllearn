@@ -30,4 +30,13 @@ https://engineering.purdue.edu/elab/CortexNet/
 - [Random Features for Large-Scale Kernel Machines](https://people.eecs.berkeley.edu/~brecht/papers/07.rah.rec.nips.pdf)
 - [Overcoming catastrophic forgetting in neural networks](https://arxiv.org/pdf/1612.00796.pdf)
 - [On Characterizing the Capacity of Neural Networks using Algebraic Topology](https://www.microsoft.com/en-us/research/video/characterizing-capacity-neural-networks-using-algebraic-topology/)
+- [Attention](http://nlp.seas.harvard.edu/2018/04/03/attention.html)
+- [THE KANERVA MACHINE:A GENERATIVE DISTRIBUTED MEMORY](https://arxiv.org/pdf/1804.01756.pdf)
+- [A Simple Way to Initialize Recurrent Networks of Rectified Linear Units](https://arxiv.org/pdf/1504.00941.pdf)
+- [Capacity and Trainability in Recurrent Neural Networks](https://openreview.net/pdf?id=BydARw9ex)
+- https://arxiv.org/pdf/1710.06451.pdf
+- https://arxiv.org/pdf/1801.05453.pdf
+- https://arxiv.org/pdf/1804.01622.pdf
+- https://arxiv.org/abs/1804.02808
+- https://arxiv.org/abs/1804.02086
 -

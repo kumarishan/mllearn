@@ -665,141 +665,79 @@ img {max-width : 100%}
     <div class ="container">
         <div class = "row">
             <div class = "col-md-12 twelve columns">
-<h2>Word2Vec</h2>
-<p><strong>Motivation</strong>
-Vector space models embedd words in a continuous vector space where
-semantically similar words are mapped to nearby points</p>
-<p><strong>Distribution hypothesis</strong> - states that words that appear in the same context
-share semantic meaning</p>
-<p>The different approaches can be categorized as</p>
+<h2>Question Answering</h2>
 <ul>
-<li>count based methods - LSA
-  computes the statistics of how often some word co-occure with their neighbor
-  in the corpus and then map these count statistics to a small dense vector</li>
-<li>predictive models - Neural Probabilistic Language models
-  directly try to predict a word from its neighbors in terms of learned, small
-  dense embedding vectors</li>
+<li><a href="https://rajpurkar.github.io/SQuAD-explorer/">Stanford Question Answering Dataset (SQuAD)</a></li>
 </ul>
-<p>Word2Vec comes in two flavors</p>
-<ul>
-<li>CBOW</li>
-<li>predicts target words from source context words</li>
-<li>smoothes over a lot of distributional information, by treating an
-    entire context as one observation</li>
-<li>useful for small dataset</li>
-<li>Skip-Gram</li>
-<li>predicts source context words from the target words</li>
-<li>treats each context target pair as new observation</li>
-<li>
-<p>tends to do better on large datasets</p>
-</li>
-<li>
-<p>10000 words -&gt; hidden layer without any activation function</p>
-</li>
-<li>one-hot vector of dim 10000 as input</li>
-<li>output sofmax layer classfier layer</li>
-<li>while training the input and output are both one-hot vector</li>
-<li>training set is bascially a pair of input-output word -- where output word
-  is the one in the vicinity of the input word</li>
-</ul>
-<p><strong>Skip Gram Model</strong></p>
-<p>The objective of the Skip-gram model is to maximize the average
-log probability
-<span class="math">\[
-\frac{1}{T} \sum_{t=1}^T \sum_{-c \leq j \leq c, j \neq 0} \log p(w_{t+j} | w_t)
-\]</span class="math"></p>
-<p>where</p>
-<p><span class="math">\[
-p(w_O | w_I) = \frac{\exp{u_{w_O}'^T v_{w_I}}}{\sum_{w=1}^{W} \exp{u_{w}'^T v_{w_I}}}
-\]</span class="math"></p>
-<p>Every word has two vectorss
-- <span class="math">\(u_w\)</span class="math"> when <span class="math">\(w\)</span class="math"> is the center word
-- <span class="math">\(v_w\)</span class="math"> when the <span class="math">\(w\)</span class="math"> is the context word</p>
-<p>The hidden layer weight matrix (10000 x 300) is what is the
-word vector lookup table that is learned.</p>
-<p>When we multiply 1x10000 with 10000x300 we effectively select
-the row weight that corresponds to 1 in one-hot input vector.
-Therefore the weight matrix is effectively the lookup table.</p>
-<p>The output layer is again 10,000 sofmax classifier layer that
-gives probabilty of each of the vocabulary word to be near to
-the input word.</p>
-<p>each output neuron as a weight vector 300x1 which it multiplies
-with the input vector and passes thru <span class="math">\(exp(x)\)</span class="math"> to get the
-probability.</p>
-<p><strong>Intuituion</strong></p>
-<p>If two different words have very similar “contexts”
-then our model needs to output very similar results for these
-two words therefore their word vectors should also be similar.</p>
-<p>Could handle stemming also as ant and ants should have very similar
-context. Others like synonyms and related words like engine and
-transmission.</p>
-<h5>Tweaks to improve upon the number of weights 3M each layer</h5>
-<p><a href="https://arxiv.org/pdf/1310.4546.pdf">Distributed Representations of Words and Phrases and their Compositionality</a></p>
-<p>There are three innovations in this second paper:
-- Treating common word pairs or phrases as single “words” in their model.
-- Subsampling frequent words to decrease the number of training examples.
-- Modifying the optimization objective with a technique they called
-  “Negative Sampling”, which causes each training sample to update only
-  a small percentage of the model’s weights.</p>
-<p><strong>Word phrases</strong></p>
-<p>After addition of word phrases the vocabulary became 3M words.
-Used Phrase detection to convert words to phrases. They used simple
-data driven approach to detect phrases.
-<span class="math">\[
-score(w_i, w_j) = \frac{count(w_iw_j) - \delta}{count(w_i) * count(w_j)}
-\]</span class="math"></p>
-<p>where <span class="math">\(\delta\)</span class="math"> is used as a discounting coefficient and prevents
-too many phrases consisting of very infrequent words to be formed.</p>
-<p>Each pass only looks at combinations of 2 words, but can be run
-multiple times to get longer phrases. They ran 2-4 times.</p>
-<p><strong>Subsampling Frequent words</strong></p>
-<p>probabilty with which to keep a given word in the vocabulary.
-<span class="math">\[
-P(w_i) = (\sqrt{\frac{z(w_i)}{0.001}} + 1).\frac{0.001}{z(w_i)}
-\]</span class="math"></p>
-<p><strong>Negative Sampling</strong></p>
-<p>Alternative to the hierarchical softmax is Noise Contrastive Estimation (NCE).</p>
-<p>NCE posits that a good model should be able to differentiate
-data from noise by means of logistic regression.</p>
-<p>e NCE can be shown to approximately maximize the log probability
-of the softmax.</p>
-<p>Good mathematical montivation for this is - the updates it proposes
-approximate the updates of the softmax function in the limit.</p>
-<p><span class="math">\[
-J_{t}(\theta) = \log \sigma(u_o^Tv_c) + \sum_{i=1}^{k} \mathbb{E}_{j \sim P(w)} [\log \sigma(-u_j^Tv_c)]
-\]</span class="math"></p>
-<p>We randomly select just a small number of negative words and learn
-with their output only set to 0. According to paper 5-20 negative
-words works well for small dataset and with huge u can select only
-2-5 negative words</p>
-<p>So in the output layer instead of 3M 300x10000 updates, we will be
-updating only for positive and 5 negative wrods therefore only
-300x6, 1800 weights.</p>
-<p>At input layer we any way update only the input word, so no chnages
-their.</p>
-<p>Negative words are selected using unigram distribution.</p>
-<p>The probability for selecting a word as a negative sample is related
-to its frequency, with more frequent words being more likely to be
-selected as negative samples.</p>
-<p><span class="math">\[
-P(w_i) = \frac{f(w_i)^\frac{3}{4}}{\sum\limits_{j=0}^{n} (f(w_i)^\frac{3}{4})}
-\]</span class="math"></p>
-<p>The power   makes   less frequent words be sampled  more    often</p>
-<p>In tensorflow we can use a similar noice-contrastive estimation <code>tf.nn.nce_loss()</code></p>
-<h3>Evaluating</h3>
-<p>One simple way to evaluate embeddings is to directly use them to predict
-syntactic and semantic relationships like king is to queen as father is to ?.
-This is called <em>analogical reasoning</em></p>
-<h3>Resources</h3>
-<ul>
-<li><a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">Tutorial</a></li>
-<li><a href="https://www.tensorflow.org/tutorials/word2vec">Vector Representations of Word</a></li>
-<li><a href="http://clic.cimec.unitn.it/marco/publications/acl2014/baroni-etal-countpredict-acl2014.pdf">Don’t count, predict</a></li>
-<li><a href="https://papers.nips.cc/paper/5165-learning-word-embeddings-efficiently-with-noise-contrastive-estimation.pdf">Learning word embeddings efficiently with noise-contrastive estimation</a></li>
-</ul>
+<p>For <strong>machine comprehension (MC)</strong> task, a query Q and
+a context C are given, our task is to predict an answer
+A, which is constrained as a segment of text of C</p>
+<h3>Reinforced Mnenomic Reader for Machine Comprehension</h3>
+<p><a href="https://arxiv.org/pdf/1705.02798.pdf">Reinforced Mnemonic Reader for Machine Comprehension</a></p>
+<p><strong>Recent works</strong></p>
+<p><em>Encoder interaction pointer framework</em>
+<a href="https://arxiv.org/pdf/1703.04816.pdf">Encoder</a>
+- word sequences of both query and context are projected into
+  distributed representations and encoded by recurrent neural networks.
+- represent each word with word-level embeddings and character-level embeddings</p>
+<p>[Attention mechanism for interaction][8]
+- used to model the complex interaction between `the query and
+  the context
+- Multiperspective Matching and Dynamic Coattention Networks,
+  only capture the interaction between the query and the
+  context by using either the attention mechanism or the
+  coattention mechanism</p>
+<p>[pointer network][9]
+- is used to predict the boundary of the answer
+- use the pointer network to calculate two probability
+  distributions for the start and end position of the answer
+- most of previous models use the boundary detecting method
+  proposed by (Wang and Jiang 2017) to train their model,
+  which is equivalent to optimizing the Exact Match (EM) metric.
+- this optimization strategy may fail when
+  the answer boundary is fuzzy or too long, such as the answer
+  of the “why” query</p>
+<p><em>Reinforced Mnemonic Reader</em>
+- incorporate both syntactic and lexical features with the
+  embedding of each word to enhance the capacity of the encoder
+- features such as exact match binary feature, POS and NER tags
+  and the query category help to identify key concepts and
+  entities of texts.
+- iteratively align the context with the query as well as the context
+  itself, and then efficiently fuse relevant semantic information
+  into each context word for obtaining a fully-aware context
+  representation
+- memory-based answer pointing mechanism that allows our model to
+  gradually increase its reading knowledge and continuously
+  refine the answer span
+- to directly optimize both the EM metric and the F1 score,
+  we introduce a new objective function which combines the
+  maximum-likelihood cross-entropy loss with rewards from
+  reinforcement learning.</p>
+<p><strong>Model</strong>
+- Model the probability distribution <span class="math">\(p_{\theta}(A|C, Q)\)</span class="math">, where <span class="math">\(\theta\)</span class="math">
+  is the set of all trainable parameters.
+- Three basic modules:
+  featurerich encoder, iterative aligner and memory-based answer pointer</p>
+<p><img alt="Reinforced Mnemonic Reader" src="figures/reinforced-mnenomic-reader.png" /></p>
+<p><strong>Feature Rich Encoder</strong>
+- is responsible for mapping these word sequences to their
+  corresponding word embeddings, and encoding these embeddings for
+  further processing.
+- Hybrid Embedding:</p>
+<h3>Attention-over-Attention Neural Networks for Reading Comprehension</h3>
+<p><a href="https://arxiv.org/pdf/1607.04423.pdf">Attention-over-Attention Neural Networks for Reading Comprehension</a></p>
+<h3>Bi-Directional Attention Flow for Machine Comprehension</h3>
+<p><a href="https://allenai.github.io/bi-att-flow/">Bi-Directional Attention Flow for Machine Comprehension</a></p>
+<h3>Gated-Attention Readers for Text Comprehension</h3>
+<p><a href="https://arxiv.org/abs/1606.01549">Gated-Attention Readers for Text Comprehension</a></p>
+<h3>R-NET: Machine Reading Comprehension with Self-matching Networks</h3>
+<p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2017/05/r-net.pdf">R-NET: Machine Reading Comprehension with Self-matching Networks</a></p>
+<h3>Encoder-iteration-pointer framework</h3>
+<h4>Resources</h4>
     <HR/>
     <div class="footer">
-      <p>Published from <a href="word2vec.pmd">word2vec.pmd</a>
+      <p>Published from <a href="qa.pmd">qa.pmd</a>
     using <a href="http://mpastell.com/pweave">Pweave</a> 0.30.2
     on 01-04-2018.<p></div>
 

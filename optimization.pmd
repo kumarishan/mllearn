@@ -1,0 +1,22 @@
+## Optimization
+
+
+- because of stochasticity it is hard to get stuck at a local
+  optima, as u keep updating. the more stochastic, ie fewer window
+  datapoints you look at for each update, the less likely to get
+  stuck. Instead if taking larger window - inefficient and more
+  likely to stuck
+- most of the time local optima is good and not very far away from
+  global optima
+- most of the time, how to regularize model better and introduce
+  more stochasticity.
+
+### Backpropagation
+
+$$
+\delta^{l} = ((W^l)^T\delta^{l+1}) \circle f'(z^l) \\
+$$
+
+
+### Resources
+- [Optimization](http://cs231n.github.io/optimization-1/)

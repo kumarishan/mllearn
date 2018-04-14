@@ -1,0 +1,24 @@
+## Classification in NLP
+
+#### Window classfication
+Train	softmax classifier	to	classify	a	center	word	by	taking
+concatenation	of	all	word	vectors	surrounding	it.
+
+$X_{window}$ is the simple concatenation of lets say 5 words.
+Therefore $X_{window} \in \mathbb{R}^{5d}$ is a column vector.
+
+Simplest classifier is softmax.
+$$
+\^{y_y} = p(y|x) = \frac{\exp{W_y.x}}{\sum_{c=1}^{C} \exp{W_c.x}}
+$$
+
+With cross entroy
+$$
+J(\theta) = \frac{1}{N}\sum_{i=1}^{N}-\log (\frac{\exp{W_y.x}}{\sum_{c=1}^{C} \exp{W_c.x}})
+$$
+
+
+
+
+### Resources
+- [Natural Language Processing (almost) from Scratch](https://arxiv.org/pdf/1103.0398v1.pdf)

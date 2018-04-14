@@ -35,6 +35,7 @@ optima problems. But the Hessian is singular/non-invertible, which causes a stra
 implementation of Newton’s method to run into numerical problems.
 
 
+
 ### Multiclass SVM Loss
 The SVM loss is set up so that the SVM “wants” the correct class
 for each image to a have a score higher than the incorrect classes by
@@ -47,6 +48,10 @@ $$
 L_i = \sum_{j\neq y_i} \max(0, s_j - s_{y_i} + \Delta)
 $$
 
+over time you can start ignoring more of the training set becoz
+it is good enough, as it will assign 0 to the cost
+
+
 **Regularization**
 
 The issue is that this set of $W$ is not necessarily unique.
@@ -57,7 +62,7 @@ loss because this transformation uniformly stretches all score
 magnitudes and hence also their absolute differences.
 
 Most common is to use $L2$ norm for regularization penalty $R(W)$
-$$
+$$s
 R(W) = \sum_k\sum_l W_{k,l}^2
 $$
 

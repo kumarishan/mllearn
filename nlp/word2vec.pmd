@@ -4,30 +4,38 @@
 Vector space models embedd words in a continuous vector space where
 semantically similar words are mapped to nearby points
 
-Distribution hypothesis - states that words that appear in the same context
+**Distribution hypothesis** - states that words that appear in the same context
 share semantic meaning
 
 The different approaches can be categorized as
-- count based methods - LSA
-  computes the statistics of how often some word co-occure with their neighbor
-  in the corpus and then map these count statistics to a small dense vector
-- predictive models - Neural Probabilistic Language models
-  directly try to predict a word from its neighbors in terms of learned, small
-  dense embedding vectors
+
+- count based methods
+  - LSA, HAL, COALS, Hellinger-PCA
+  - computes the statistics of how often some word co-occure with their neighbor
+    in the corpus and then map these count statistics to a small dense vector
+  - Fast training
+  - Efficient usage of statistics
+  - Primarily used to capture word similarity
+  - Disproportionate importance given to large counts
+- predictive models
+  - Neural Probabilistic Language models, NNLM, HLBL, RNN, Skip-gram/CBOW
+  - directly try to predict a word from its neighbors in terms of learned, small
+    dense embedding vectors
+  - Scale with corpus size
+  - Inefficient usage of statistics
+  - Can capture complex patterns beyond word similarity
 
 Word2Vec comes in two flavors
+
 - CBOW
   - predicts target words from source context words
   - smoothes over a lot of distributional information, by treating an
     entire context as one observation
   - useful for small dataset
 - Skip-Gram
-  - predicts source context wrods from the target words
+  - predicts source context words from the target words
   - treats each context target pair as new observation
   - tends to do better on large datasets
-
-
-
 
 
 - 10000 words -> hidden layer without any activation function
@@ -38,7 +46,25 @@ Word2Vec comes in two flavors
   is the one in the vicinity of the input word
 
 
-**Model**
+**Skip Gram Model**
+
+The objective of the Skip-gram model is to maximize the average
+log probability
+$$
+\frac{1}{T} \sum_{t=1}^T \sum_{-c \leq j \leq c, j \neq 0} \log p(w_{t+j} | w_t)
+$$
+
+where
+
+$$
+p(w_O | w_I) = \frac{\exp{u_{w_O}'^T v_{w_I}}}{\sum_{w=1}^{W} \exp{u_{w}'^T v_{w_I}}}
+$$
+
+Every word has two vectorss
+- $u_w$ when $w$ is the center word
+- $v_w$ when the $w$ is the context word
+
+The final representation is the simple sum of these two vectors
 
 The hidden layer weight matrix (10000 x 300) is what is the
 word vector lookup table that is learned.
@@ -66,7 +92,7 @@ Could handle stemming also as ant and ants should have very similar
 context. Others like synonyms and related words like engine and
 transmission.
 
-### Tweaks to improve upon the number of weights 3M each layer
+##### Tweaks to improve upon the number of weights 3M each layer
 [Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/pdf/1310.4546.pdf)
 
 There are three innovations in this second paper:
@@ -105,8 +131,20 @@ $$
 
 **Negative Sampling**
 
+Alternative to the hierarchical softmax is Noise Contrastive Estimation (NCE).
+
+NCE posits that a good model should be able to differentiate
+data from noise by means of logistic regression.
+
+e NCE can be shown to approximately maximize the log probability
+of the softmax.
+
 Good mathematical montivation for this is - the updates it proposes
 approximate the updates of the softmax function in the limit.
+
+$$
+J_{t}(\theta) = \log \sigma(u_o^Tv_c) + \sum_{i=1}^{k} \mathbb{E}_{j \sim P(w)} [\log \sigma(-u_j^Tv_c)]
+$$
 
 We randomly select just a small number of negative words and learn
 with their output only set to 0. According to paper 5-20 negative
@@ -130,14 +168,46 @@ $$
 P(w_i) = \frac{f(w_i)^\frac{3}{4}}{\sum\limits_{j=0}^{n} (f(w_i)^\frac{3}{4})}
 $$
 
-In tensorflow we can use a similar noice-contrastive estimation ```tf.nn.nce_loss()```
+The	power	makes	less frequent words	be sampled	more	often
 
+In tensorflow we can use a similar noice-contrastive estimation ```tf.nn.nce_loss()```
 
 ### Evaluating
 One simple way to evaluate embeddings is to directly use them to predict
 syntactic and semantic relationships like king is to queen as father is to ?.
 This is called *analogical reasoning*
 
+Intrinsic evaluation - word vector distance and correlation with human
+judgement, analogical reasoning
+
+Extrinsic evaluation - NER
+$$
+d = argmax_i \frac{(x_b - x_a + x_c)^Tx_i}{\norm{x_b - x_a + x_c}}
+$$
+For task like sentiment analysis word vectors dont perform very well.
+
+
+
+### GloVe
+$$
+J(\theta) = \frac{1}{2} \sum_{i,j=1}^{W} f(P_{ij})(u_i^{T}v_j - \log (P_{ij}))^2
+$$
+$P_{ij}$ is the co-ocurrence matrix
+
+- Good performance even on small corpora and small vectors
+- $f$ to cap the importance of very frequent words
+
+having separate vectors is more stable in optimization
+
+
+### Polysemy
+- Polysemous vectors are superpositioned
+- Sense/context vectors can be recovered using Sparse coding algorithm
+$ v = \sum_{i=0}^D \alpha_i A_i + \eta$
+
+
+###
+S
 
 
 

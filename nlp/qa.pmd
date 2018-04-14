@@ -1,0 +1,149 @@
+## Question Answering
+- [Stanford Question Answering Dataset (SQuAD)][1]
+
+For **machine comprehension (MC)** task, a query Q and
+a context C are given, our task is to predict an answer
+A, which is constrained as a segment of text of C
+
+
+### Reinforced Mnenomic Reader for Machine Comprehension
+[Reinforced Mnemonic Reader for Machine Comprehension][2]
+
+**Recent works**
+
+_Encoder interaction pointer framework_
+[Encoder][7]
+- word sequences of both query and context are projected into
+  distributed representations and encoded by recurrent neural networks.
+- represent each word with word-level embeddings and character-level embeddings
+
+[Attention mechanism for interaction][8]
+- used to model the complex interaction between `the query and
+  the context
+- Multiperspective Matching and Dynamic Coattention Networks,
+  only capture the interaction between the query and the
+  context by using either the attention mechanism or the
+  coattention mechanism
+
+[pointer network][9]
+- is used to predict the boundary of the answer
+- use the pointer network to calculate two probability
+  distributions for the start and end position of the answer
+- most of previous models use the boundary detecting method
+  proposed by (Wang and Jiang 2017) to train their model,
+  which is equivalent to optimizing the Exact Match (EM) metric.
+- this optimization strategy may fail when
+  the answer boundary is fuzzy or too long, such as the answer
+  of the “why” query
+
+_Reinforced Mnemonic Reader_
+- incorporate both syntactic and lexical features with the
+  embedding of each word to enhance the capacity of the encoder
+- features such as exact match binary feature, POS and NER tags
+  and the query category help to identify key concepts and
+  entities of texts.
+- iteratively align the context with the query as well as the context
+  itself, and then efficiently fuse relevant semantic information
+  into each context word for obtaining a fully-aware context
+  representation
+- memory-based answer pointing mechanism that allows our model to
+  gradually increase its reading knowledge and continuously
+  refine the answer span
+- to directly optimize both the EM metric and the F1 score,
+  we introduce a new objective function which combines the
+  maximum-likelihood cross-entropy loss with rewards from
+  reinforcement learning.
+
+**Model**
+- Model the probability distribution $p_{\theta}(A|C, Q)$, where $\theta$
+  is the set of all trainable parameters.
+- Three basic modules:
+  featurerich encoder, iterative aligner and memory-based answer pointer
+
+![Reinforced Mnemonic Reader](figures/reinforced-mnenomic-reader.png)
+
+**Feature Rich Encoder**
+- is responsible for mapping these word sequences to their
+  corresponding word embeddings, and encoding these embeddings for
+  further processing.
+
+**Hybrid Embedding** Given a query $Q = {w_i^q}_{i=1}^n$
+and context $C = {w_j^c}_{j=1}^m$ the feature-rich encoder firstly
+converts each word $w$ to its respective word embedding $x_w$.
+
+n and m denote the length of query and context respectively.
+
+the encoder also embeds each word $w$ by encoding its character sequence
+with a bidirectional long short-term memory network. The last hidden
+states are considered as the character-level embedding $x_c$.
+
+Each word embedding $x$ is then represented as the concatenation
+of character-level embedding and word-level embedding,
+denoted as $x = [x_w; x_c] \in \mathbb{R}^d$
+
+**Additional Features** binary feature of exact matching (EM) -
+whether a word in context can be exactly matched to one
+query word.
+additional look-up based embedding matrices for parts-of-speech
+tags and named-entity tags.
+query categories: what, how, who, when, which, where, why, be,
+other. Each query category is then represented by a trainable
+embedding. lookup its query-category embedding and use a
+feedforward neural network for projection.
+
+Finally after incorporating all embeddings
+${\tilde{x}_i^q}_{i=1}^n$ for query. ${\tilde{x}_j^c}_{j=1}^m$
+for the context.
+
+**Encoding** To model the word sequence under its
+contextual information, we use another BiLSTM to encode
+both the context and the query as follows:
+
+$$
+\begin{align*}
+q_i &= BiLSTM(q_{i−1}, \tilde{x}_i^q), \forall i \in [1, ..., n] \\
+c_i &= BiLSTM(c_{j−1}, \tilde{x}_j^c), \forall j \in [1, ..., n]
+\end{align*}
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Attention-over-Attention Neural Networks for Reading Comprehension
+[Attention-over-Attention Neural Networks for Reading Comprehension][3]
+
+
+### Bi-Directional Attention Flow for Machine Comprehension
+[Bi-Directional Attention Flow for Machine Comprehension][4]
+
+
+### Gated-Attention Readers for Text Comprehension
+[Gated-Attention Readers for Text Comprehension][5]
+
+### R-NET: Machine Reading Comprehension with Self-matching Networks
+[R-NET: Machine Reading Comprehension with Self-matching Networks][6]
+
+
+### Encoder-iteration-pointer framework
+
+
+
+#### Resources
+
+[1]: https://rajpurkar.github.io/SQuAD-explorer/
+[2]: https://arxiv.org/pdf/1705.02798.pdf
+[3]: https://arxiv.org/pdf/1607.04423.pdf
+[4]: https://allenai.github.io/bi-att-flow/
+[5]: https://arxiv.org/abs/1606.01549
+[6]: https://www.microsoft.com/en-us/research/wp-content/uploads/2017/05/r-net.pdf
+[7]: https://arxiv.org/pdf/1703.04816.pdf

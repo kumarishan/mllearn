@@ -1,0 +1,165 @@
+## Lecture 3 Language Modelling and RNNs Part 1
+
+[https://github.com/oxford-cs-deepnlp-2017/lectures](https://github.com/oxford-cs-deepnlp-2017/lectures)
+
+Translation
+$$
+p_{LM}(Les chiens ||| Dog loves)
+$$
+
+Question Answer
+Dialogue
+
+
+*Language modelling*
+- Joint distribution over strings
+- The simple objective of modelling the next word
+  given the observed history contains much of the
+  complexity of natural language understanding
+- Human language acquisition partly relies on future
+  prediction
+
+*Evaluating a language model*
+
+__Cross entropy__
+
+- assign a real utterence high probabilty
+- usually done using cross entropy
+- Cross entropy is measure of how many bits are needed to
+  encode text with our model
+  $-\frac{1}{N} \sum \log p(w^{N})$
+
+  __Perplexity__
+- Preplexity is the measure of how surprised our model is
+  on seeing each word. $2^{H(w^N)$
+
+
+3 approaches to parametrizing the language model
+
+*Count based N Gram modelling*
+- Markov assumption - only k-1 previous words included
+- 2-gram - just use the previous word
+- MLE is the ratio of counts
+- Interpolated backoff
+  - simplest linear interpolation - of unigram, bigram and trigram
+- Knesser-Ney - most common smoothing and interpolation
+- after about 1-trillion word, simple interpolated backoff work - stupid backoff - google
+- smaller dataset more complex is required
+- bascially to match the posterior to what is actually seen in the natural language
+  - like long tails
+  - smoothing and interpolation try to capture these
+  - modern models still lack these
+- Count based are exceptionally scalable
+- fast constant time during test
+- sophisticated smoothing tech match empirical distribution of the natural language
+- large ngrams are sparse
+- symbolic nature doesnot capture relationships/correlations/similarity
+- morphological regularities eg running - jumping
+
+*Neural N Gram models*
+- predict the probabilty distribution over the possible next words with history
+  as input
+- neural layer is used to do this
+- ngram tells the history words for input
+- one-hot vector of input words
+- output and input |V| vocab size
+- sample from the output probabilty
+  - this can be used to generate sentences
+- cross entropy objective
+  - one-hot word vector with the log probabilty vector
+- calculating gradients for each timestep is independent of the other
+  - can be computed in parallel
+- better generalization on unseen ngrams
+- smaller memory footprint
+- num of parameter increase with ngram size
+- limit to longest dependencies
+- mostly trained with ML based objectives, which donot encode
+  expected word freq a priori
+
+*Recurrent Neural Network Language Models*
+- Backpropagation through time
+- truncated BPTT
+  - we do forward propagate, but truncate the Backpropagation
+- dropped the n gram limit
+- represent unbounded dependencies
+- compress history of words into hidden vectors
+- RNN are hard to learn - often dont discover long range dependencies
+- mostly trained with MLE type objectives, doesnot encode word freq
+- cell state or hidden vector size is the memory capacity
+
+
+Bias-Variance Tradeoff - NGram are biased but low variance no matter how much data.
+low variance because we dont have long range dependencies, therefore very low variations.
+RNNs - since it use MLE, therefore with infinite data will represent true distribution
+therefore with noninfinite date high variance by low bias.
+
+
+*Exploding and Vanishing gradient*
+$V_h$ effectively is mutliplied multiple times. From linear algebra, if a matrix
+is multiplied multiple times, by looking at the spectral radius of the matrix... ie
+if the largest eigenvalue is
+- 1 the gradient will propagate
+- >1 the product will grow exponentially (explode)
+  - can be solved by clipping
+  - not able to train - infinite gradient
+- <1 then product will shrink exponentially (vanish)
+  - long range dependencies are not learned at all
+  - many non linearities also shrink the gradient
+  - Second order optimizers (Quasi-Newtonian Methods) can help but dont scale.
+    then problem is that we are only looking at first derivative
+  - Careful initialization can help
+  - most popular way is to change the architecture - to help gradient propagate easily
+    like LSTM
+  - LSTM solves it by removing direct dependency between hn and hn-1 thru cell gate.
+    ie from one hidden to next, it becomes additive (therefore no more vanishing becuase of
+    repeated multiplication)
+  - GRU
+  - RNN can work with careful intialization, but LSTM and GRU just works
+  - LSTM and GRU have more parameters, most are not in the memory
+
+*Scaling: Large vocabularies*
+- Full softmax
+  - slow calculation
+  - training O(V), evaluating O(V), sampling O(V)
+- Approximate the gradient change objective
+- NCE
+  - in softmax denom is for all to minimize and increate the one we want to pedict
+  - instead we take a sample of noise words from a noise distribution - unigram distribution
+  - log partition function c doesnot degenarate
+  - effective speeding up the training but not testing as softmax still needs to be carried out
+  - training comp O(k) mem O(V), evaluating O(V), sampling O(V)
+- Importance Sampling
+  - use multi class classificaton for true and noise word with a softmax and cross entropy loss
+  - might be more stable than NCE
+- Factorize the output vocabulary
+  - create classes much less than the vocabulary
+  - then predict word from that class
+  - two level factorization - two softmax
+  - quadratic speedup
+  - how to choose classes
+    - Brown clustering - good choice
+    - frequency based not so much
+  - training comp O(sqrt V) mem O(V), evaluating comp O(sqrt V) mem O(V), sampling O(V)
+- Factorize to binary tree
+  - we can get logV speedup
+  - choosing a binary tree is hard
+  - path based not so good for GPU
+  - n ary tree based work on GPU -- Grave et al -- softmax approximation
+  - training comp O(log V) mem O(V), evaluating comp O(log V) mem O(V), sampling O(V)
+
+Another approach -- character level
+- help to capture sub word structure
+- sequence is going to get longer
+- structure or correlation between word is harder
+- solves unknown word
+- looks like the more ideal way to model language - only if word level structure gets solved
+
+
+*Regularization*
+- overparameterize and then heavily regularize to improve generalization
+- dropout
+- doesnt work with RNN between the recurrent connection
+- better to use at other places non-recurrent ones
+- sample drouput mask for the entire sequence
+- also can be sampled at evaluation time
+-
